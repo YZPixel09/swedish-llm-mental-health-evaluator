@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Data and results
+*.json
+results/
+data/
+outputs/
+
+# API keys
+.env
+config.ini
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary test files
+api_call_verification.json
+quick_test_results.json
+real_test_results.json
+real_ei_results_*.json
+example_results.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
