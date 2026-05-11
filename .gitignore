@@ -13,10 +13,9 @@ ENV/
 *.ipynb_checkpoints
 
 # Data and results
-*.json
-results/
-data/
-outputs/
+#esults/
+#ata/
+#utputs/
 
 # API keys
 .env
