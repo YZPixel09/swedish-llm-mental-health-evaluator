@@ -4,44 +4,47 @@ Configuration for Emotional Intelligence Framework
 
 from typing import Dict, List
 
-# Model configurations
+# ============================================================
+# Model Configurations
+# Four LLMs selected for comparative evaluation:
+# ChatGPT-5.4, Gemini 3.1 Pro, Claude Opus 4.6, DeepSeek V3.2
+# All accessed via OpenRouter unified API
+# ============================================================
 MODELS = {
-    "Mixtral-8x22B": {
-        "api_id": "mistralai/mixtral-8x22b-instruct",
-        "provider": "Mistral AI",
-        "architecture": "Mixture of Experts",
-        "context_length": 32768,
-        "strengths": ["speed", "efficiency"]
+    #  "ChatGPT-5.4"
+    "ChatGPT-5.4": {
+        "api_id": "openai/gpt-5.4",
+        "provider": "OpenAI",
+        "architecture": "Transformer",
+        "context_length": 128000,
+        "strengths": ["reasoning", "instruction-following"]
     },
-    "Claude Opus 4": {
-        "api_id": "anthropic/claude-opus-4",
+    #  "Gemini 3.1 Pro"
+    "Gemini 3.1 Pro": {
+        "api_id": "google/gemini-3.1-pro-preview",
+        "provider": "Google",
+        "architecture": "Multimodal",
+        "context_length": 1000000,
+        "strengths": ["multimodal", "general"]
+    },
+    #  "Claude Opus 4.6" 
+    "Claude Opus 4.6": {
+        "api_id": "anthropic/claude-opus-4.6",
         "provider": "Anthropic",
         "architecture": "Constitutional AI",
         "context_length": 200000,
         "strengths": ["empathy", "nuance"]
     },
-    "Llama 3.3 70B": {
-        "api_id": "meta-llama/llama-3.3-70b-instruct",
-        "provider": "Meta",
-        "architecture": "Transformer",
-        "context_length": 8192,
-        "strengths": ["open-source", "balanced"]
-    },
-    "DeepSeek R1": {
-        "api_id": "deepseek/deepseek-r1-0528",
+    #  "DeepSeek V3.2" 
+    "DeepSeek V3.2": {
+        "api_id": "deepseek/deepseek-v3.2",
         "provider": "DeepSeek",
-        "architecture": "Reasoning-optimized",
-        "context_length": 32768,
+        "architecture": "MoE",
+        "context_length": 128000,
         "strengths": ["reasoning", "analysis"]
-    },
-    "Gemini 2.5 Pro": {
-        "api_id": "google/gemini-2.5-pro",
-        "provider": "Google",
-        "architecture": "Multimodal",
-        "context_length": 32768,
-        "strengths": ["multimodal", "general"]
     }
 }
+
 
 # Test scenarios organized by dimension
 TEST_SCENARIOS = {
@@ -159,7 +162,14 @@ DIMENSION_WEIGHTS = {
     "social_awareness": 0.20
 }
 
-# API Configuration
+# ============================================================
+# API settings shared across all model calls.
+# timeout and retry values are set conservatively to handle
+# variation in model response latency across providers.
+# model_delay ensures rate limits are respected between models.
+# temperature is fixed at 0.7 for all models to ensure that
+# prompt conditions are identical across the evaluation.
+# ============================================================
 API_CONFIG = {
     "base_url": "https://openrouter.ai/api/v1",
     "timeout": 45,

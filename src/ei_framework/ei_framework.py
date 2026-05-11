@@ -79,40 +79,38 @@ class EmotionalIntelligenceFramework:
         self.results = []
         
     def _initialize_models(self) -> Dict[str, ModelConfig]:
-        """Initialize model configurations"""
+        """Initialize model configurations: ChatGPT-5.4, Gemini 3.1 Pro, Claude Opus 4.6, DeepSeek V3.2"""
+        
         return {
-            "Mixtral-8x22B": ModelConfig(
-                name="Mixtral-8x22B",
-                api_id="mistralai/mixtral-8x22b-instruct",
-                provider="Mistral AI",
-                architecture="Mixture of Experts"
-            ),
-            "Claude Opus 4": ModelConfig(
-                name="Claude Opus 4",
-                api_id="anthropic/claude-opus-4",
-                provider="Anthropic",
-                architecture="Constitutional AI"
-            ),
-            "Llama 3.3 70B": ModelConfig(
-                name="Llama 3.3 70B",
-                api_id="meta-llama/llama-3.3-70b-instruct",
-                provider="Meta",
-                architecture="Transformer"
-            ),
-            "DeepSeek R1": ModelConfig(
-                name="DeepSeek R1",
-                api_id="deepseek/deepseek-r1-0528",
-                provider="DeepSeek",
-                architecture="Reasoning-optimized"
-            ),
-            "Gemini 2.5 Pro": ModelConfig(
-                name="Gemini 2.5 Pro",
-                api_id="google/gemini-2.5-pro",
-                provider="Google",
-                architecture="Multimodal"
-            )
-        }
-    
+        # OpenAI GPT-5.4 
+        "ChatGPT-5.4": ModelConfig(
+            name="ChatGPT-5.4",
+            api_id="openai/gpt-5.4",
+            provider="OpenAI",
+            architecture="Transformer"
+        ),
+        # Google Gemini 3.1 Pro
+        "Gemini 3.1 Pro": ModelConfig(
+            name="Gemini 3.1 Pro",
+            api_id="google/gemini-3.1-pro-preview",
+            provider="Google",
+            architecture="Multimodal"
+        ),
+        # Anthropic Claude Opus 4.6
+        "Claude Opus 4.6": ModelConfig(
+            name="Claude Opus 4.6",
+            api_id="anthropic/claude-opus-4.6",
+            provider="Anthropic",
+            architecture="Constitutional AI"
+        ),
+        # DeepSeek V3.2 
+        "DeepSeek V3.2": ModelConfig(
+            name="DeepSeek V3.2",
+            api_id="deepseek/deepseek-v3.2",
+            provider="DeepSeek",
+            architecture="MoE"
+        ),
+    }
     def _initialize_scenarios(self) -> List[TestScenario]:
         """Initialize test scenarios"""
         scenarios = []

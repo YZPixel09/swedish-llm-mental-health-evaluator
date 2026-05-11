@@ -4,6 +4,8 @@ Basic usage example for Emotional Intelligence Framework
 
 import os
 import sys
+from dotenv import load_dotenv
+load_dotenv()   
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from src.ei_framework import EmotionalIntelligenceFramework
@@ -27,7 +29,7 @@ def main():
     # Select only one model for quick test
     framework.models = {
         k: v for k, v in framework.models.items() 
-        if k == "Mixtral-8x22B"
+        if k == "DeepSeek V3.2"
     }
     
     # Use only first 2 scenarios
