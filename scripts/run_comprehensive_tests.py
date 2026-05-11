@@ -291,7 +291,7 @@ def main():
     }
     
     # Save results
-    print("\n💾 Saving results...")
+    print("\n Saving results...")
     saver = ResultsSaver()
     
     # Save raw results
@@ -312,7 +312,7 @@ def main():
     
     # Print final summary
     print("\n" + "=" * 70)
-    print("📊 FINAL SUMMARY")
+    print(" FINAL SUMMARY")
     print("=" * 70)
     
     print("\nSuccess Rates by Dimension:")
