@@ -159,26 +159,26 @@ def query_model_verbose(model_name, model_id, scenario_name, prompt):
             
     except requests.exceptions.Timeout:
         elapsed = time.time() - start_time
-        print(f"\n⏱️  TIMEOUT after {elapsed:.1f} seconds")
+        print(f"\n⏱  TIMEOUT after {elapsed:.1f} seconds")
         return {"success": False, "error": "Request timeout", "time": elapsed}
         
     except Exception as e:
         elapsed = time.time() - start_time
-        print(f"\n❌ EXCEPTION: {type(e).__name__}")
-        print(f"📄 Error: {str(e)}")
+        print(f"\n EXCEPTION: {type(e).__name__}")
+        print(f" Error: {str(e)}")
         import traceback
         traceback.print_exc()
         return {"success": False, "error": str(e), "time": elapsed}
 
 def main():
     """Run complete test with verbose logging"""
-    print("🧠 COMPREHENSIVE EMOTIONAL INTELLIGENCE TEST - VERBOSE MODE")
+    print(" COMPREHENSIVE EMOTIONAL INTELLIGENCE TEST - VERBOSE MODE")
     log_separator()
-    print(f"📅 Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"🔑 API Key: {'Set' if API_KEY else 'Not Set'}")
-    print(f"📍 Endpoint: {API_URL}")
-    print(f"🤖 Models: {len(MODELS)}")
-    print(f"📝 Scenarios: {len(SCENARIOS)}")
+    print(f" Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f" API Key: {'Set' if API_KEY else 'Not Set'}")
+    print(f" Endpoint: {API_URL}")
+    print(f" Models: {len(MODELS)}")
+    print(f" Scenarios: {len(SCENARIOS)}")
     log_separator()
     
     # Results storage
@@ -198,13 +198,13 @@ def main():
     successful_tests = 0
     total_time = 0
     
-    print(f"\n🚀 Starting {total_tests} tests...\n")
+    print(f"\n Starting {total_tests} tests...\n")
     
     # Test each model
     for model_idx, (model_name, model_id) in enumerate(MODELS.items(), 1):
-        print(f"\n{'🤖'*20}")
+        print(f"\n{''*20}")
         print(f"MODEL {model_idx}/{len(MODELS)}: {model_name}")
-        print(f"{'🤖'*20}")
+        print(f"{''*20}")
         
         all_results["results"][model_name] = {
             "model_id": model_id,
@@ -214,7 +214,7 @@ def main():
         # Test each scenario
         for scenario_idx, (scenario_key, scenario_data) in enumerate(SCENARIOS.items(), 1):
             completed_tests += 1
-            print(f"\n📊 Test {completed_tests}/{total_tests} - {scenario_data['name']}")
+            print(f"\n Test {completed_tests}/{total_tests} - {scenario_data['name']}")
             
             # Make the API call
             result = query_model_verbose(
@@ -234,9 +234,9 @@ def main():
             
             # Progress update
             success_rate = (successful_tests / completed_tests) * 100
-            print(f"\n📈 Progress: {completed_tests}/{total_tests} tests")
-            print(f"✅ Success rate: {successful_tests}/{completed_tests} ({success_rate:.1f}%)")
-            print(f"⏱️  Total time so far: {total_time:.1f}s")
+            print(f"\n Progress: {completed_tests}/{total_tests} tests")
+            print(f" Success rate: {successful_tests}/{completed_tests} ({success_rate:.1f}%)")
+            print(f"⏱  Total time so far: {total_time:.1f}s")
             
             # Rate limiting
             if completed_tests < total_tests:
@@ -245,7 +245,7 @@ def main():
         
         # Extra delay between models
         if model_idx < len(MODELS):
-            print(f"\n⏳ Waiting 3 seconds before next model...")
+            print(f"\n Waiting 3 seconds before next model...")
             time.sleep(3)
     
     # Save results
@@ -256,26 +256,26 @@ def main():
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(all_results, f, indent=2, ensure_ascii=False)
     
-    print(f"💾 Results saved to: {filename}")
+    print(f" Results saved to: {filename}")
     
     # Final summary
     log_separator("FINAL SUMMARY")
-    print(f"✅ Tests completed: {completed_tests}/{total_tests}")
-    print(f"✅ Successful: {successful_tests}")
-    print(f"❌ Failed: {completed_tests - successful_tests}")
-    print(f"📊 Success rate: {(successful_tests/completed_tests*100):.1f}%")
-    print(f"⏱️  Total time: {total_time:.1f} seconds")
-    print(f"⏱️  Average time per test: {total_time/completed_tests:.1f} seconds")
+    print(f" Tests completed: {completed_tests}/{total_tests}")
+    print(f" Successful: {successful_tests}")
+    print(f" Failed: {completed_tests - successful_tests}")
+    print(f" Success rate: {(successful_tests/completed_tests*100):.1f}%")
+    print(f"⏱  Total time: {total_time:.1f} seconds")
+    print(f"⏱  Average time per test: {total_time/completed_tests:.1f} seconds")
     
     # Model summary
-    print("\n📊 BY MODEL:")
+    print("\n BY MODEL:")
     for model_name in MODELS.keys():
         model_tests = all_results["results"][model_name]["tests"]
         successes = sum(1 for t in model_tests.values() if t.get('success', False))
         print(f"   {model_name}: {successes}/{len(SCENARIOS)} successful")
     
     # Scenario summary  
-    print("\n📊 BY SCENARIO:")
+    print("\n BY SCENARIO:")
     for scenario_key, scenario_data in SCENARIOS.items():
         successes = sum(
             1 for model_results in all_results["results"].values()
@@ -283,7 +283,7 @@ def main():
         )
         print(f"   {scenario_data['name']}: {successes}/{len(MODELS)} models succeeded")
     
-    print("\n✅ ALL DONE!")
+    print("\n ALL DONE!")
     return all_results
 
 if __name__ == "__main__":
