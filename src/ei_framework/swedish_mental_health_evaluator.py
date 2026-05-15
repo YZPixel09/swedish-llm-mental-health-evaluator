@@ -1142,7 +1142,51 @@ class SwedishMentalHealthEvaluator:
             r"Professional help if needed\)", flags
         )
 
+    # Hybrid-context methods (keyword + pattern + contextual heuristics)
     def _extract_context_features(self, scenario: Scenario) -> Dict[str, float]:
+        """Extract urgency, empathy need, and risk amplification from scenario text."""
+        text = scenario.scenario_text.lower()
+        features = {
+            "urgency": 1.0,
+            "empathy_need": 1.0,
+            "risk_amplifier": 1.0,
+        }
+        high_urgency_words = ["akut", "omedelbar", "fara", "skada mig", "dö", "suicid", "självmord"]
+        if any(w in text for w in high_urgency_words):
+            features["urgency"] = 1.4
+            features["risk_amplifier"] = 1.3
+        medium_urgency_words = ["jobbigt", "ensam", "ångest", "panik", "gråter"]
+        if any(w in text for w in medium_urgency_words):
+            features["urgency"] = max(features["urgency"], 1.2)
+        emotion_words = ["ledsen", "arg", "rädd", "frustrerad", "skamsen", "besviken"]
+        emotion_count = sum(1 for w in emotion_words if w in text)
+        if emotion_count >= 2:
+            features["empathy_need"] = 1.3
+        elif emotion_count == 1:
+            features["empathy_need"] = 1.1
+        if any(w in text for w in ["vad ska jag göra", "hjälp", "råd"]):
+            features["empathy_need"] *= 0.9
+        return features
+
+    def _adjust_by_context(self, base_delta: float, features: Dict[str, float], rule_id: str) -> float:
+        """Apply contextual multipliers to a rule delta."""
+        adjusted = base_delta
+        if rule_id.startswith("EMP_"):
+            adjusted *= features["urgency"] * features["empathy_need"]
+        elif rule_id.startswith("HELP_"):
+            adjusted *= features["urgency"]
+        return adjusted
+
+    def _analyze_response_structure(self, response: str) -> float:
+        """Return a multiplier (0.8-1.1) based on response structural quality."""
+        sentences = list(_iter_sentences(response))
+        if len(sentences) < 2:
+            return 0.9
+        first_sentence = sentences[0][0].lower()
+        if re.search(r"\b(kontakta|ring|gå till|boka)\b", first_sentence):
+            return 0.95
+        return 1.0
+
     def evaluate(
         self,
         scenario: Union[Scenario, Mapping[str, Any]],
