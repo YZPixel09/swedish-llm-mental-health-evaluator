@@ -86,7 +86,7 @@ API_CONFIG = {
     "rate_limit_delay": 2,
     "model_delay": 3,
     "default_temperature": 0.7,
-    "max_tokens": 800
+    "max_tokens": 1200
 }
 
 # Analysis Configuration
