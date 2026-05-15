@@ -79,7 +79,7 @@ class EmotionalIntelligenceFramework:
         self.results = []
         
     def _initialize_models(self) -> Dict[str, ModelConfig]:
-        """Initialize model configurations: ChatGPT-5.4, Gemini 3.1 Pro, Claude Opus 4.6, DeepSeek V3.2"""
+        """Initialize model configurations: ChatGPT-5.4, Gemini 3.1 Flash Lite, Claude Opus 4.6, DeepSeek V3.2"""
         
         return {
         # OpenAI GPT-5.4 
@@ -89,10 +89,10 @@ class EmotionalIntelligenceFramework:
             provider="OpenAI",
             architecture="Transformer"
         ),
-        # Google Gemini 3.1 Pro
+        # Gemini 3.1 Flash Lite
         "Gemini 3.1 Pro": ModelConfig(
-            name="Gemini 3.1 Pro",
-            api_id="google/gemini-3.1-pro-preview",
+            name="Gemini 3.1 Flash Lite",
+            api_id="google/gemini-3.1-flash-lite",
             provider="Google",
             architecture="Multimodal"
         ),

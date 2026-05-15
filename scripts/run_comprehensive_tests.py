@@ -20,7 +20,7 @@ API_URL = "https://openrouter.ai/api/v1/chat/completions"
 # ── Models under evaluation ────────────────────────────────────────
 MODELS = {
     "ChatGPT-5.4":    "openai/gpt-5.4",
-    "Gemini 3.1 Pro": "google/gemini-3.1-pro-preview",
+    "Gemini 3.1 Flash Lite": "google/gemini-3.1-flash-lite",
     "Claude Opus 4.6":"anthropic/claude-opus-4.6",
     "DeepSeek V3.2":  "deepseek/deepseek-v3.2",
 }

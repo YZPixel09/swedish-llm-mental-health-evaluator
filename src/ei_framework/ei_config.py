@@ -20,9 +20,9 @@ MODELS = {
         "context_length": 128000,
         "strengths": ["reasoning", "instruction-following"]
     },
-    #  "Gemini 3.1 Pro"
-    "Gemini 3.1 Pro": {
-        "api_id": "google/gemini-3.1-pro-preview",
+    #  "Gemini 3.1 Flash Lite"
+    "Gemini 3.1 Flash Lite": {
+        "api_id": "google/gemini-3.1-flash-lite",
         "provider": "Google",
         "architecture": "Multimodal",
         "context_length": 1000000,
