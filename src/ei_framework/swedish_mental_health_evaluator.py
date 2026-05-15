@@ -588,9 +588,11 @@ class SwedishMentalHealthEvaluator:
             purpose="Detects direct empathic expressions of sorrow for what the user is going through.",
             pattern=(
                 r"\bjag är (?:verkligen )?ledsen (?:att höra |)att du (?:går igenom|har det|upplever|mår)\b|"
+                r"\bjag är (?:verkligen )?ledsen (?:över|för) (?:din|ditt)\b|"
                 r"\bjag beklagar (?:verkligen )?(?:förlusten av|att)\b|"
-                r"\bdet är (?:verkligen )?tråkigt att (?:höra |)att du\b"
-            ),
+                r"\bdet är (?:verkligen )?tråkigt att (?:höra |)att du\b|"
+                r"\bdet gör mig ont (?:att höra|att du)\b"
+        ),
             score_effect="+0.8",
             category="emotional_acknowledgement",
             negation_sensitive=True,
@@ -716,14 +718,6 @@ class SwedishMentalHealthEvaluator:
             condition="first advice marker appears before acknowledgement",
             score_effect="-1.0",
             flags=("advice_before_acknowledgement",),
-        ),
-        "negated_marker": RuleDefinition(
-            id="EMP_NEGATED_MARKER_IGNORED",
-            dimension=Dimension.EMPATHY,
-            purpose="A normally empathic phrase was ignored because it was negated nearby.",
-            condition="negation marker within local token window",
-            score_effect="0.0",
-            flags=("negated_empathy_marker",),
         ),
     }
 
@@ -868,8 +862,8 @@ class SwedishMentalHealthEvaluator:
             id="HELP_SOCIAL_ACTIVITY",
             dimension=Dimension.HELPFULNESS,
             purpose="Recommends social activities to reduce loneliness.",
-            pattern=r"\b(?:kurs|träningsgrupp|bokcirkel|förening|Meetup|språkcafé|"
-                    r"volontärgrupp|återkommande aktivitet)\b",
+            pattern=r"\b(?:kurs|kurser|träningsgrupp|bokcirkel|förening|föreningar|Meetup|språkcafé|"
+                    r"volontärgrupp|volontärarbete|ideell organisation|återkommande aktivitet)\b",
             score_effect="+0.5",
             category="social",
             flags=("help_social",),
@@ -1437,11 +1431,6 @@ class SwedishMentalHealthEvaluator:
             matches_seen = 0
             for match, negated in self._iter_rule_matches(rule, response):
                 sentence = sentence_for_span(response, match.start(), match.end())
-                if negated:
-                    ignored_rule = self.EMPATHY_STRUCTURAL_RULES["negated_marker"]
-                    result.add_rule(ignored_rule, match.group(0), sentence, 0.0)
-                    continue
-
                 if self.settings.cap_repeated_matches and rule.id in scored_rules:
                     if matches_seen < 1:
                         result.add_rule(rule, match.group(0), sentence, 0.0)
