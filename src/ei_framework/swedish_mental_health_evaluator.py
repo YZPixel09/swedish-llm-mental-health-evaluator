@@ -523,7 +523,7 @@ class SwedishMentalHealthEvaluator:
                 r"det är helt naturligt|"
                 r"(?:kan|kan vara) (?:väldigt|mycket|oerhört) (?:utmattande|påfrestande|tungt|krävande)|"
                 r"\b(?:det|det du beskriver) (?:är|känns) (?:ganska|mycket|)? (?:vanligt|normalt)\b|"
-                r"\ben (?:vanlig|normal) reaktion\b"
+                r"\ben (?:vanlig|normal) reaktion\b)"
             ),
             score_effect="+0.7",
             category="normalization",
