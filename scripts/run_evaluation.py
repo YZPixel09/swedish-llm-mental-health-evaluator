@@ -10,8 +10,7 @@ import argparse
 import os
 import sys
 from pathlib import Path
-from ei_framework import EmotionalIntelligenceFramework
-from ei_analyzer import EIAnalyzer
+from ei_framework import EmotionalIntelligenceFramework, EIAnalyzer
 import logging
 
 # Configure logging

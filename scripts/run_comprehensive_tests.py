@@ -20,7 +20,7 @@ API_URL = "https://openrouter.ai/api/v1/chat/completions"
 # ── Models under evaluation ────────────────────────────────────────
 MODELS = {
     "ChatGPT-5.4":    "openai/gpt-5.4",
-    "Gemini 3.1 Pro": "google/gemini-3.1-pro-preview",
+    "Gemini 3.1 Flash Lite": "google/gemini-3.1-flash-lite",
     "Claude Opus 4.6":"anthropic/claude-opus-4.6",
     "DeepSeek V3.2":  "deepseek/deepseek-v3.2",
 }
@@ -195,16 +195,53 @@ def save_results(results: Dict) -> str:
 
 def main():
     results = run_comprehensive_tests()
-    save_results(results)
-
-    # Quick success-rate summary
-    scenarios = load_scenarios()
-    print("\nSUCCESS RATE SUMMARY")
-    print("-" * 40)
-    for model_name, model_data in results["model_results"].items():
-        ok = sum(1 for s in model_data["scenarios"] if s["success"])
-        print(f"  {model_name}: {ok}/{len(scenarios)}")
-
+    
+    # Analyze results
+    print("\n🔍 Analyzing results...")
+    emotions_analysis = analyze_emotion_recognition(results)
+    
+    # Add analysis to results
+    results["analysis"] = {
+        "emotion_recognition_summary": emotions_analysis,
+        "timestamp": datetime.now().isoformat()
+    }
+    
+    # Save results
+    print("\n Saving results...")
+    saver = ResultsSaver()
+    
+    # Save raw results
+    raw_path = saver.save_raw_results(results)
+    
+    # Create summary DataFrame
+    summary_data = []
+    for model in MODELS.keys():
+        for dimension in TEST_SCENARIOS.keys():
+            summary_data.append({
+                "Model": model,
+                "Dimension": dimension,
+                "Success_Rate": results["dimension_summaries"][dimension].get(model, "0/0")
+            })
+    
+    summary_df = pd.DataFrame(summary_data)
+    csv_path, json_path = saver.save_processed_scores(summary_df)
+    
+    # Print final summary
+    print("\n" + "=" * 70)
+    print(" FINAL SUMMARY")
+    print("=" * 70)
+    
+    print("\nSuccess Rates by Dimension:")
+    for dimension, model_scores in results["dimension_summaries"].items():
+        print(f"\n{dimension}:")
+        for model, score in model_scores.items():
+            print(f"  {model}: {score}")
+    
+    print(f"\n✅ All results saved successfully!")
+    print(f"Raw results: {raw_path}")
+    print(f"Summary CSV: {csv_path}")
+    
+    return results
 
 if __name__ == "__main__":
     main()

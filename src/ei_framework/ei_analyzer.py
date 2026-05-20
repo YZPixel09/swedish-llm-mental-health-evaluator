@@ -135,6 +135,9 @@ class EIAnalyzer:
     def generate_insights(self) -> List[str]:
         """Generate key insights from the analysis"""
         insights = []
+
+        if self.df.empty:
+            return ["No results available for analysis"]
         
         # Success rates
         success_rates = self.df.groupby('model_name')['success'].mean() * 100
@@ -143,19 +146,25 @@ class EIAnalyzer:
         
         # Response times
         avg_times = self.df[self.df['success'] == True].groupby('model_name')['response_time'].mean()
-        fastest = avg_times.idxmin()
-        insights.append(f"Fastest average response: {fastest} ({avg_times[fastest]:.2f}s)")
+        if not avg_times.empty:
+            fastest = avg_times.idxmin()
+            insights.append(f"Fastest average response: {fastest} ({avg_times[fastest]:.2f}s)")
+        else:
+            insights.append("No successful responses available for response-time analysis")
         
         # Emotion detection
         emotion_analysis = self.emotion_analysis()
-        best_detector = max(
-            emotion_analysis['emotion_diversity'].items(),
-            key=lambda x: x[1]['unique_emotions']
-        )
-        insights.append(
-            f"Best emotion detector: {best_detector[0]} "
-            f"({best_detector[1]['unique_emotions']} unique emotions)"
-        )
+        if emotion_analysis['emotion_diversity']:
+            best_detector = max(
+                emotion_analysis['emotion_diversity'].items(),
+                key=lambda x: x[1]['unique_emotions']
+            )
+            insights.append(
+                f"Best emotion detector: {best_detector[0]} "
+                f"({best_detector[1]['unique_emotions']} unique emotions)"
+            )
+        else:
+            insights.append("No successful responses available for emotion analysis")
         
         # Empathy scores
         empathy_scores = self.empathy_scoring()
@@ -169,6 +178,9 @@ class EIAnalyzer:
         """Create all visualizations"""
         output_path = Path(output_dir)
         output_path.mkdir(parents=True, exist_ok=True)
+
+        if self.df.empty:
+            return output_path
         
         # 1. Success Rate Comparison
         plt.figure(figsize=(10, 6))
@@ -183,16 +195,17 @@ class EIAnalyzer:
         plt.close()
         
         # 2. Response Time Distribution
-        plt.figure(figsize=(10, 6))
         successful_df = self.df[self.df['success'] == True]
-        successful_df.boxplot(column='response_time', by='model_name')
-        plt.title('Response Time Distribution by Model')
-        plt.ylabel('Response Time (seconds)')
-        plt.xlabel('Model')
-        plt.suptitle('')
-        plt.tight_layout()
-        plt.savefig(output_path / 'response_times.png', dpi=300)
-        plt.close()
+        if not successful_df.empty:
+            plt.figure(figsize=(10, 6))
+            successful_df.boxplot(column='response_time', by='model_name')
+            plt.title('Response Time Distribution by Model')
+            plt.ylabel('Response Time (seconds)')
+            plt.xlabel('Model')
+            plt.suptitle('')
+            plt.tight_layout()
+            plt.savefig(output_path / 'response_times.png', dpi=300)
+            plt.close()
         
         # 3. Emotion Detection Heatmap
         emotion_data = self.emotion_analysis()
@@ -211,25 +224,28 @@ class EIAnalyzer:
                    for emotion in all_emotions]
             emotion_matrix.append(row)
         
-        plt.figure(figsize=(12, 8))
-        sns.heatmap(
-            emotion_matrix,
-            xticklabels=all_emotions,
-            yticklabels=models,
-            cmap='YlOrRd',
-            annot=True,
-            fmt='d'
-        )
-        plt.title('Emotion Detection Frequency Heatmap')
-        plt.xlabel('Emotions')
-        plt.ylabel('Models')
-        plt.xticks(rotation=45)
-        plt.tight_layout()
-        plt.savefig(output_path / 'emotion_heatmap.png', dpi=300)
-        plt.close()
+        if emotion_matrix and all_emotions:
+            plt.figure(figsize=(12, 8))
+            sns.heatmap(
+                emotion_matrix,
+                xticklabels=all_emotions,
+                yticklabels=models,
+                cmap='YlOrRd',
+                annot=True,
+                fmt='d'
+            )
+            plt.title('Emotion Detection Frequency Heatmap')
+            plt.xlabel('Emotions')
+            plt.ylabel('Models')
+            plt.xticks(rotation=45)
+            plt.tight_layout()
+            plt.savefig(output_path / 'emotion_heatmap.png', dpi=300)
+            plt.close()
         
         # 4. Dimension Performance Radar
         dimension_perf = self.dimension_performance()
+        if dimension_perf.empty:
+            return output_path
         
         fig, ax = plt.subplots(figsize=(10, 10), subplot_kw=dict(projection='polar'))
         

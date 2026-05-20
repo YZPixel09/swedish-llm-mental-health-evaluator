@@ -200,7 +200,7 @@ def create_token_usage_comparison(results):
                 })
     
     if not token_data:
-        print("⚠️ Nessun dato sui token trovato")
+        print(" Nessun dato sui token trovato")
         return None
     
     df = pd.DataFrame(token_data)

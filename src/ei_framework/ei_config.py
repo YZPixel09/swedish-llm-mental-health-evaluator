@@ -20,9 +20,9 @@ MODELS = {
         "context_length": 128000,
         "strengths": ["reasoning", "instruction-following"]
     },
-    #  "Gemini 3.1 Pro"
-    "Gemini 3.1 Pro": {
-        "api_id": "google/gemini-3.1-pro-preview",
+    #  "Gemini 3.1 Flash Lite"
+    "Gemini 3.1 Flash Lite": {
+        "api_id": "google/gemini-3.1-flash-lite",
         "provider": "Google",
         "architecture": "Multimodal",
         "context_length": 1000000,
@@ -54,30 +54,42 @@ def load_swedish_scenarios(path: str = None) -> list:
     Returns a flat list of scenario objects.
     """
     if path is None:
-        # Resolve relative to this file's location
         base = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         path = os.path.join(base, "data", "scenarios_swedish.json")
+    
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
-# Load scenarios at import time so the rest of the codebase can import TEST_SCENARIOS as before
+
+def load_english_scenarios(path: str = None) -> list:
+    """
+    Load the English mental health scenario library from JSON.
+    Used for cross-lingual comparison (Swedish vs English).
+    """
+    if path is None:
+        base = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        path = os.path.join(base, "data", "scenarios_english.json")
+    
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+# Load Swedish scenarios (backward compatibility)
 TEST_SCENARIOS = load_swedish_scenarios()
 
-# Evaluation weights
+
+# Evaluation weights (same for both languages)
 DIMENSION_WEIGHTS = {
     "empathy": 0.30,
-    "safety": 0.30,       # safety carries equal weight to empathy
+    "safety": 0.30,
     "helpfulness": 0.20,
-    "swedish_context": 0.20
+    "swedish_context": 0.20,      # Will be ignored or set to 0 in English mode
+    "contextual_appropriateness": 0.20   # New: more general name for English
 }
+
 
 # ============================================================
 # API settings shared across all model calls.
-# timeout and retry values are set conservatively to handle
-# variation in model response latency across providers.
-# model_delay ensures rate limits are respected between models.
-# temperature is fixed at 0.7 for all models to ensure that
-# prompt conditions are identical across the evaluation.
 # ============================================================
 API_CONFIG = {
     "base_url": "https://openrouter.ai/api/v1",
@@ -86,10 +98,11 @@ API_CONFIG = {
     "rate_limit_delay": 2,
     "model_delay": 3,
     "default_temperature": 0.7,
-    "max_tokens": 800
+    "max_tokens": 1200
 }
 
-# Analysis Configuration
+
+# Analysis Configuration - Extended for English
 ANALYSIS_CONFIG = {
     "emotion_keywords": [
         # Primary emotions
@@ -106,10 +119,13 @@ ANALYSIS_CONFIG = {
     ],
     
     "empathy_indicators": [
+        # English common empathy phrases
         'sorry', 'understand', 'feel', 'support', 'here for you',
         'difficult', 'hard', 'compassion', 'care', 'listen',
         'acknowledge', 'valid', 'heart goes out', 'empathize',
-        'imagine', 'must be', 'sounds like', 'hear you'
+        'imagine', 'must be', 'sounds like', 'hear you',
+        "that sounds really tough", "i'm really sorry", "you're not alone",
+        "that must be", "i can only imagine", "thank you for sharing"
     ],
     
     "professional_indicators": [
@@ -118,6 +134,7 @@ ANALYSIS_CONFIG = {
         'professional', 'respectful', 'constructive'
     ]
 }
+
 
 # Output Configuration
 OUTPUT_CONFIG = {
@@ -128,3 +145,25 @@ OUTPUT_CONFIG = {
     "visualization_formats": ["png", "svg"],
     "dpi": 300
 }
+
+
+# Language Configuration (New)
+LANGUAGE_CONFIG = {
+    "default": "swedish",
+    "supported": ["swedish", "english"],
+    "swedish_context_weight": 0.20,
+    "english_context_weight": 0.20
+}
+
+
+__all__ = [
+    "MODELS",
+    "TEST_SCENARIOS",
+    "DIMENSION_WEIGHTS",
+    "API_CONFIG",
+    "ANALYSIS_CONFIG",
+    "OUTPUT_CONFIG",
+    "LANGUAGE_CONFIG",
+    "load_swedish_scenarios",
+    "load_english_scenarios",
+]
